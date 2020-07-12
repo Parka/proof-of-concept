@@ -1,0 +1,15 @@
+{
+  "name": "thumbnail-generator-api",
+  "version": "1.0.0",
+  "main": "handler.js",
+  "license": "MIT",
+  "devDependencies": {
+    "serverless-offline": "^6.4.0"
+  },
+  "scripts": {
+    "offline": "serverless offline"
+  },
+  "dependencies": {
+    "sharp": "^0.25.4"
+  }
+}
