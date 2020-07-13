@@ -52,6 +52,7 @@ module.exports.resize = wrapper(async (event) => {
     return {statusCode:415}
 
   const CONFIG = SIZES.map(([width, height], i) => ({
+    width, height,
     key: `${width}x${height}-${uuid()}-${original.filename}`,
     image: (i===(SIZES.length-1) ? sharp : sharp.clone())
       .resize(width, height),
@@ -72,7 +73,10 @@ module.exports.resize = wrapper(async (event) => {
     statusCode: 200,
     body: JSON.stringify(
       {
-        thumbnails: CONFIG.map(({key}) => `https://${process.env.bucket}.s3.amazonaws.com/${key}`)
+        thumbnails: CONFIG.map(({key, width, height}) => ({
+          width, height,
+          url: `https://${process.env.bucket}.s3.amazonaws.com/${key}`
+        }))
       },
       null,
       2
