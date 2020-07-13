@@ -2,11 +2,16 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
+import Box from '@material-ui/core/Box';
+import CssBaseline from '@material-ui/core/CssBaseline'
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <CssBaseline />
+    <Box minHeight="100vh" bgcolor="grey.200" p={2}>
+      <App />
+    </Box>
   </React.StrictMode>,
   document.getElementById('root')
 );
