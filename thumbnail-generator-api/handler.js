@@ -53,7 +53,7 @@ module.exports.resize = wrapper(async (event) => {
 
   const CONFIG = SIZES.map(([width, height], i) => ({
     key: `${width}x${height}-${uuid()}-${original.filename}`,
-    image: (i===(SIZES.length-1) ? sharp.clone() : sharp)
+    image: (i===(SIZES.length-1) ? sharp : sharp.clone())
       .resize(width, height),
   }))
 
