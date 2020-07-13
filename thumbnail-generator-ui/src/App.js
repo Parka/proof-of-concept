@@ -42,8 +42,8 @@ function App() {
         preview: URL.createObjectURL(file)
       })));
       const fd = new FormData();
-      fd.append('image', files[0]);
-      fetch('http://localhost:3000/dev/resize',{
+      fd.append('image', acceptedFiles[0]);
+      fetch(process.env.REACT_APP_API_ENDPOINT,{
         method: 'POST',
         body: fd,
       }).then(console.log)
