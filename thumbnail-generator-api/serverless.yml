@@ -23,30 +23,33 @@ service: thumbnail-generator-api
 provider:
   name: aws
   runtime: nodejs12.x
-
+  apiGateway:
+    binaryMediaTypes:
+      - 'multipart/form-data'
 # you can overwrite defaults here
 #  stage: dev
 #  region: us-east-1
 
 # you can add statements to the Lambda function's IAM Role here
-#  iamRoleStatements:
+  iamRoleStatements:
 #    - Effect: "Allow"
 #      Action:
 #        - "s3:ListBucket"
 #      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:PutObject"
-#      Resource:
-#        Fn::Join:
-#          - ""
-#          - - "arn:aws:s3:::"
-#            - "Ref" : "ServerlessDeploymentBucket"
-#            - "/*"
+    - Effect: "Allow"
+      Action:
+        - "s3:PutObject"
+      Resource:
+        Fn::Join:
+          - ""
+          - - "arn:aws:s3:::"
+            - "Ref" : ResizedBucket
+            - "/*"
 
 # you can define service wide environment variables here
-#  environment:
-#    variable1: value1
+  environment:
+    bucket:
+      Ref: ResizedBucket
 
 # you can add packaging information here
 #package:
@@ -58,7 +61,7 @@ provider:
 #    - exclude-me-dir/**
 
 functions:
-  hello:
+  resize:
     handler: handler.resize
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
@@ -67,6 +70,7 @@ functions:
       - http:
           path: resize
           method: post
+          cors: true
 #      - websocket: $connect
 #      - s3: ${env:BUCKET}
 #      - schedule: rate(10 minutes)
@@ -101,12 +105,29 @@ functions:
 #      variable2: value2
 
 # you can add CloudFormation resource templates here
-#resources:
-#  Resources:
-#    NewResource:
-#      Type: AWS::S3::Bucket
-#      Properties:
-#        BucketName: my-new-bucket
+resources:
+  Resources:
+    ResizedBucket:
+      Type: AWS::S3::Bucket
+    s3Permissions:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket:
+          Ref: ResizedBucket
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Sid: getObjectFromS3
+            Action:
+              - s3:GetObject
+            Effect: Allow
+            Resource:
+              Fn::Join:
+                - ""
+                - - "arn:aws:s3:::"
+                  - "Ref" : ResizedBucket
+                  - "/*"
+            Principal: "*"
 #  Outputs:
 #     NewOutput:
 #       Description: "Description for the output"
